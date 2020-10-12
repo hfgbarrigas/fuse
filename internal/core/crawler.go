@@ -21,7 +21,7 @@ type CrawlResult struct {
 }
 
 // Crawl traverses the provided directory tree structure looking for text files. It will not follow sym links.
-func Crawl(contentDir, targetDir string, concurrency int8) (chan *CrawlResult, error) {
+func Crawl(contentDir, targetDir, commentDelimiter string, concurrency int8) (chan *CrawlResult, error) {
 	var queue = make(chan WorkItem, concurrency)
 
 	contentAbs, targetAbs, err := validatePaths(contentDir, targetDir)
@@ -34,7 +34,7 @@ func Crawl(contentDir, targetDir string, concurrency int8) (chan *CrawlResult, e
 	result := initWorker(queue)
 
 	// crawl directory tree. This is the queue producer
-	err = crawlDirectory(contentAbs, targetAbs, queue)
+	err = crawlDirectory(contentAbs, targetAbs, commentDelimiter, queue)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "Crawling error")
@@ -44,7 +44,7 @@ func Crawl(contentDir, targetDir string, concurrency int8) (chan *CrawlResult, e
 }
 
 // traverse the directory tree and for each valid file put it in the queue to be processed. Once done, close the queue channel.
-func crawlDirectory(contentAbs, targetAbs string, queue chan WorkItem) error {
+func crawlDirectory(contentAbs, targetAbs, commentDelimiter string, queue chan WorkItem) error {
 	log.Debug().
 		Msg("Crawling: " + contentAbs)
 
@@ -89,10 +89,11 @@ func crawlDirectory(contentAbs, targetAbs string, queue chan WorkItem) error {
 		}
 
 		queue <- WorkItem{
-			OriginalAbsPath: targetAbs + commonPath,
-			UpdateAbsPath:   path,
-			ID:              wiID.String(),
-			CommonPath:      commonPath,
+			OriginalAbsPath:  targetAbs + commonPath,
+			UpdateAbsPath:    path,
+			ID:               wiID.String(),
+			CommonPath:       commonPath,
+			CommentDelimiter: commentDelimiter,
 		}
 
 		return nil

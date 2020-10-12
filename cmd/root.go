@@ -8,11 +8,12 @@ import (
 )
 
 var (
-	repoName    string
-	pat         string
-	tag         string
-	contentDir  string
-	concurrency int8
+	repoName         string
+	pat              string
+	tag              string
+	contentDir       string
+	commentDelimiter string
+	concurrency      int8
 
 	prettyLogging  bool
 	logStackTraces bool
@@ -45,6 +46,8 @@ func init() {
 				The path may be relative to the current execution process directory (where you execute fuse) or an absolute path.`)
 	rootCmd.PersistentFlags().StringVarP(&tag, "tag", "v", "latest",
 		"Git tag to be used when committing to master.")
+	rootCmd.PersistentFlags().StringVarP(&commentDelimiter, "commentDelimiter", "h", "#",
+		"Comment delimiter used for Fuse file mark.")
 
 	rootCmd.PersistentFlags().BoolVarP(&prEnabled, "prEnabled", "i", false,
 		"If enabled, fuse will work in a new branch and create the associated pull request with the changes.")

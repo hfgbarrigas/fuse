@@ -33,11 +33,12 @@ var azdevopsCmd = &cobra.Command{
 
 		input := providers.AzureDevOps{
 			Common: domain.CommonInput{
-				RepositoryName: repoName,
-				Pat:            pat,
-				ContentDir:     contentDir,
-				Concurrency:    concurrency,
-				Tag:            tag,
+				RepositoryName:   repoName,
+				Pat:              pat,
+				ContentDir:       contentDir,
+				Concurrency:      concurrency,
+				Tag:              tag,
+				CommentDelimiter: commentDelimiter,
 			},
 			PullRequest: domain.PullRequestInput{
 				Title:        prTitle,

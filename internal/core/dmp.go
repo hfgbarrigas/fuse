@@ -11,15 +11,16 @@ import (
 	"strings"
 )
 
-var touchedByFuse = "# managed by fuse"
+var touchedByFuse = " managed by fuse"
 
-// WorkItem represents an intended pair o content to be patched. An original absolute destination pointing to the initial version
-// and an absolute path poiting to the updated content to be patched in the original destination.
+// WorkItem represents an intended pair of content to be patched. An original absolute destination pointing to the initial version
+// and an absolute path pointing to the updated content to be patched in the original destination.
 type WorkItem struct {
-	OriginalAbsPath string
-	UpdateAbsPath   string
-	CommonPath      string
-	ID              string
+	OriginalAbsPath  string
+	UpdateAbsPath    string
+	CommonPath       string
+	ID               string
+	CommentDelimiter string
 }
 
 // WorkItemResult represents the result of a WorkItem.
@@ -89,7 +90,7 @@ func (w *WorkItem) ComputeDiffPatch() (result WorkItemResult) {
 	if err != nil {
 		return errorResult(w, err)
 	}
-	decoratedContent := decorateUpdateContent(string(updateContent))
+	decoratedContent := decorateUpdateContent(string(updateContent), w.CommentDelimiter)
 
 	// 2. if the file doesn't exist in the target repo don't compute anything
 	_, err = os.Stat(w.OriginalAbsPath)
@@ -159,6 +160,6 @@ func errorResult(w *WorkItem, err error) WorkItemResult {
 	}
 }
 
-func decorateUpdateContent(content string) string {
-	return touchedByFuse + "\n" + content
+func decorateUpdateContent(content, commentDelimiter string) string {
+	return commentDelimiter + touchedByFuse + "\n" + content
 }

@@ -30,7 +30,8 @@ func Fuse(provider providers.Provider) error {
 	defer os.RemoveAll(*gitCloneRoot)
 
 	// start the crawling and diffing process
-	diffsChannel, err := core.Crawl(provider.GetCommonInput().ContentDir, *gitCloneRoot, provider.GetCommonInput().Concurrency)
+	diffsChannel, err := core.Crawl(provider.GetCommonInput().ContentDir, *gitCloneRoot,
+		provider.GetCommonInput().CommentDelimiter, provider.GetCommonInput().Concurrency)
 
 	if err != nil {
 		return logErrAndReturn(err)

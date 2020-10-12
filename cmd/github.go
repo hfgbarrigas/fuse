@@ -32,11 +32,12 @@ var githubCmd = &cobra.Command{
 
 		input := providers.GitHub{
 			Common: domain.CommonInput{
-				RepositoryName: repoName,
-				Pat:            pat,
-				ContentDir:     contentDir,
-				Concurrency:    concurrency,
-				Tag:            tag,
+				RepositoryName:   repoName,
+				Pat:              pat,
+				ContentDir:       contentDir,
+				Concurrency:      concurrency,
+				Tag:              tag,
+				CommentDelimiter: commentDelimiter,
 			},
 			PullRequest: domain.PullRequestInput{
 				Title:        prTitle,
