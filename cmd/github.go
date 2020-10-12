@@ -46,7 +46,7 @@ var githubCmd = &cobra.Command{
 			Owner: owner,
 		}
 
-		return workflow.AzDevOpsFuse(&input)
+		return workflow.Fuse(&input)
 	},
 }
 

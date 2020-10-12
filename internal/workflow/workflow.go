@@ -11,8 +11,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// AzDevOpsFuse kicks off the patching workflow for azdevops
-func AzDevOpsFuse(provider providers.Provider) error {
+// Fuse kicks off the patching workflow
+func Fuse(provider providers.Provider) error {
 	log.Info().Msg("Fusing")
 	branchName := providers.TargetBranch
 

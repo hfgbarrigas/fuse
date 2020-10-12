@@ -48,7 +48,7 @@ var azdevopsCmd = &cobra.Command{
 			ProjectName:     projectName,
 		}
 
-		return workflow.AzDevOpsFuse(&input)
+		return workflow.Fuse(&input)
 	},
 }
 
