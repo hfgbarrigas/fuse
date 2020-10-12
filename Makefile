@@ -1,6 +1,9 @@
 version=latest
 
-all: build lint test release
+all: build fmt lint test release
+
+fmt:
+	go fmt ./...
 
 build: test
 		go build

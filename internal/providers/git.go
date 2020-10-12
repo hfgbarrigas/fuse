@@ -125,7 +125,8 @@ func GitPush(repositoryDir, branch string) error {
 		Str("command", strings.Join([]string{"git", "push", "-u", "origin", branch}, " ")).
 		Send()
 
-	_, stderr, err := process.ExecuteProcess(strings.Join([]string{"git", "push", "-u", "origin", branch}, " "), &repositoryDir)
+	_, stderr, err := process.ExecuteProcess(strings.Join([]string{"git", "push", "--follow-tags", "-u", "origin", branch}, " "),
+		&repositoryDir)
 
 	if err != nil {
 		log.Error().
@@ -134,6 +135,24 @@ func GitPush(repositoryDir, branch string) error {
 	}
 
 	log.Info().Msg("Successfully pushed changes.")
+
+	return nil
+}
+
+// GitTag creates a annotated git tag
+func GitTag(repositoryDir, tag string) error {
+	log.Info().
+		Msg("Tagging git commit")
+
+	_, stderr, err := process.ExecuteProcess(strings.Join([]string{"git", "tag", "-m", "Fuse release " + tag, tag}, " "), &repositoryDir)
+
+	if err != nil {
+		log.Error().
+			Msg(stderr)
+		return errors.Wrap(err, "Git error")
+	}
+
+	log.Info().Msg("Successfully tagged.")
 
 	return nil
 }

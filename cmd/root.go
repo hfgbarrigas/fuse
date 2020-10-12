@@ -10,6 +10,7 @@ import (
 var (
 	repoName    string
 	pat         string
+	tag         string
 	contentDir  string
 	concurrency int8
 
@@ -42,6 +43,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&contentDir, "contentDir", "d", "",
 		`Path to the directory that contains the content to be used by fuse in the target repository. 
 				The path may be relative to the current execution process directory (where you execute fuse) or an absolute path.`)
+	rootCmd.PersistentFlags().StringVarP(&pat, "tag", "v", "latest",
+		"Git tag to be used when committing to master.")
 
 	rootCmd.PersistentFlags().BoolVarP(&prEnabled, "prEnabled", "i", false,
 		"If enabled, fuse will work in a new branch and create the associated pull request with the changes.")

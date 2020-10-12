@@ -4,6 +4,7 @@ package domain
 // CommonInput are cli inputs that are common to all providers
 type CommonInput struct {
 	RepositoryName string
+	Tag            string
 	Pat            string
 	ContentDir     string
 	Concurrency    int8

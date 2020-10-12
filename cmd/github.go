@@ -36,6 +36,7 @@ var githubCmd = &cobra.Command{
 				Pat:            pat,
 				ContentDir:     contentDir,
 				Concurrency:    concurrency,
+				Tag:            tag,
 			},
 			PullRequest: domain.PullRequestInput{
 				Title:        prTitle,

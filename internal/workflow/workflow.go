@@ -14,7 +14,7 @@ import (
 // AzDevOpsFuse kicks off the patching workflow for azdevops
 func AzDevOpsFuse(provider providers.Provider) error {
 	log.Info().Msg("Azure DevOps workflow.")
-	branchName := "master"
+	branchName := providers.TargetBranch
 
 	if provider.GetPullRequestInput().Enabled {
 		branchName = uuid.Must(uuid.NewRandom()).String()
@@ -44,6 +44,14 @@ func AzDevOpsFuse(provider providers.Provider) error {
 
 		if err != nil {
 			return logErrAndReturn(err)
+		}
+
+		if providers.TargetBranch == branchName {
+			err = providers.GitTag(*gitCloneRoot, provider.GetCommonInput().Tag)
+
+			if err != nil {
+				return logErrAndReturn(err)
+			}
 		}
 
 		err = providers.GitPush(*gitCloneRoot, branchName)

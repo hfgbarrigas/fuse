@@ -25,5 +25,6 @@ type ProviderPullRequest struct {
 	PullRequestURL string
 }
 
-// TargetBranch defines the default target branch used on provider pull requests
+// TargetBranch defines the default target branch used when executing fuse.
+// For git operations and pull request target
 const TargetBranch = "master"
