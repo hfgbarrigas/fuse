@@ -144,7 +144,13 @@ func GitTag(repositoryDir, tag string) error {
 	log.Info().
 		Msg("Tagging git commit")
 
-	_, stderr, err := process.ExecuteProcess(strings.Join([]string{"git", "tag", "-m", "Fuse release " + tag, tag}, " "), &repositoryDir)
+	command := strings.Join([]string{"git", "tag", "-a", tag, "-m"}, " ") + " \"Fuse release " + tag + "\""
+
+	log.Info().
+		Str("command", command).
+		Msg("Tagging git commit")
+
+	_, stderr, err := process.ExecuteProcess(command, &repositoryDir)
 
 	if err != nil {
 		log.Error().

@@ -13,7 +13,7 @@ import (
 
 // AzDevOpsFuse kicks off the patching workflow for azdevops
 func AzDevOpsFuse(provider providers.Provider) error {
-	log.Info().Msg("Azure DevOps workflow.")
+	log.Info().Msg("Fusing")
 	branchName := providers.TargetBranch
 
 	if provider.GetPullRequestInput().Enabled {

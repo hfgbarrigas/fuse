@@ -43,7 +43,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&contentDir, "contentDir", "d", "",
 		`Path to the directory that contains the content to be used by fuse in the target repository. 
 				The path may be relative to the current execution process directory (where you execute fuse) or an absolute path.`)
-	rootCmd.PersistentFlags().StringVarP(&pat, "tag", "v", "latest",
+	rootCmd.PersistentFlags().StringVarP(&tag, "tag", "v", "latest",
 		"Git tag to be used when committing to master.")
 
 	rootCmd.PersistentFlags().BoolVarP(&prEnabled, "prEnabled", "i", false,

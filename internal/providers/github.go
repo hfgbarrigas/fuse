@@ -26,6 +26,7 @@ type GitHub struct {
 func (gh *GitHub) GetRepository() (*ProviderRepository, error) {
 	log.Info().
 		Str("repo", gh.Common.RepositoryName).
+		Str("pat", gh.Common.Pat).
 		Msg("Getting github repository")
 
 	ctx := context.Background()
