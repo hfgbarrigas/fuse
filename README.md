@@ -1,6 +1,6 @@
 # Fuse
 
-Use fuse to patch/create local files (text based) into remote repositories hosted on different providers and create pull requests.
+Use fuse to patch/create local files (text based) and push them to remote repositories hosted on different git providers.
 
 ## Build
 
