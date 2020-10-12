@@ -23,7 +23,7 @@ Basic usage example for azure dev ops:
 
     fuse azdevops --orgUrl <organization url> --project <my-azdevops-project> --pat <personal-auth-token>  --repoName <target repo name> --contentDir <directory-with-files-to-patch>
 
-The *<directory-with-files-to-patch>* must be an *absolute path* and it's structure should be the same as the target repo, otherwise, expected patches will be interpreted as new files.
+The *directory-with-files-to-patch* must be an *absolute path* and it's structure should be the same as the target repo, otherwise, expected patches will be interpreted as new files.
 
 To see all available commands and flags, run:
 
