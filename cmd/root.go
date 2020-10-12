@@ -46,7 +46,7 @@ func init() {
 				The path may be relative to the current execution process directory (where you execute fuse) or an absolute path.`)
 	rootCmd.PersistentFlags().StringVarP(&tag, "tag", "v", "latest",
 		"Git tag to be used when committing to master.")
-	rootCmd.PersistentFlags().StringVarP(&commentDelimiter, "commentDelimiter", "h", "#",
+	rootCmd.PersistentFlags().StringVarP(&commentDelimiter, "commentDelimiter", "e", "//",
 		"Comment delimiter used for Fuse file mark.")
 
 	rootCmd.PersistentFlags().BoolVarP(&prEnabled, "prEnabled", "i", false,
