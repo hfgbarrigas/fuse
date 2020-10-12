@@ -13,7 +13,7 @@ Once installer, run:
     
 To release fuse run:
 
-    make <version>
+    make version=<version>
 
 Binaries for linux, MacOs and Windows 64bit are generated and located at releases/<version> .
 
