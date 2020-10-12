@@ -3,6 +3,7 @@ package providers
 
 import (
 	"context"
+	"strconv"
 
 	"fuse/internal/domain"
 
@@ -15,9 +16,21 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// AzDevOpsGetRepository will fetch the repository details on azure devops.
-func AzDevOpsGetRepository(input *domain.AzureDevOpsInput) (*git.GitRepository, error) {
-	connection := azuredevops.NewPatConnection(input.OrganizationURL, input.Common.Pat)
+// AzureDevOps encapsulates azure devops metadata and bridges communication to az devops provider
+type AzureDevOps struct {
+	OrganizationURL string
+	ProjectName     string
+	Common          domain.CommonInput
+	PullRequest     domain.PullRequestInput
+}
+
+// GetRepository will fetch the repository details on azure devops
+func (az *AzureDevOps) GetRepository() (*ProviderRepository, error) {
+	log.Info().
+		Str("repoName", az.Common.RepositoryName).
+		Msg("Getting repository from azure devops")
+
+	connection := azuredevops.NewPatConnection(az.OrganizationURL, az.Common.Pat)
 
 	ctx := context.Background()
 
@@ -28,33 +41,34 @@ func AzDevOpsGetRepository(input *domain.AzureDevOpsInput) (*git.GitRepository, 
 	}
 
 	gitRepo, err := gitClient.GetRepository(ctx, git.GetRepositoryArgs{
-		RepositoryId: &input.Common.RepositoryName,
-		Project:      &input.ProjectName,
+		RepositoryId: &az.Common.RepositoryName,
+		Project:      &az.ProjectName,
 	})
 
 	if err != nil {
 		return nil, errors.WithStack(errors.Wrap(err, "AzureDevOps error"))
 	}
 
-	return gitRepo, nil
+	return &ProviderRepository{
+		WebURL: *gitRepo.WebUrl,
+		Name:   *gitRepo.Name,
+	}, nil
 }
 
-// AzDevOpsCreatePullRequest creates a pull request
-func AzDevOpsCreatePullRequest(input *domain.AzureDevOpsInput, branchName string) (*git.GitPullRequest, error) {
-	targetBranch := "master"
-
+// CreatePullRequest creates a pull request on azure devops
+func (az *AzureDevOps) CreatePullRequest(sourceBranch *string) (*ProviderPullRequest, error) {
 	log.Info().
-		Str("prTitle", input.PullRequest.Title).
-		Str("prTarget", targetBranch).
-		Str("prSource", branchName).
-		Str("repoName", input.Common.RepositoryName).
-		Msg("Creating pull request")
+		Str("prTitle", az.PullRequest.Title).
+		Str("prTarget", TargetBranch).
+		Str("prSource", *sourceBranch).
+		Str("repoName", az.Common.RepositoryName).
+		Msg("Creating GitHub pull request")
 
 	// pr unique identifier
 	prID := uuid.Must(uuid.NewRandom()).String()
 	ctx := context.Background()
 
-	connection := azuredevops.NewPatConnection(input.OrganizationURL, input.Common.Pat)
+	connection := azuredevops.NewPatConnection(az.OrganizationURL, az.Common.Pat)
 	gitClient, err := git.NewClient(ctx, connection)
 
 	if err != nil {
@@ -62,27 +76,27 @@ func AzDevOpsCreatePullRequest(input *domain.AzureDevOpsInput, branchName string
 	}
 
 	refPrefix := "refs/heads/"
-	prTarget := refPrefix + targetBranch
-	prSource := refPrefix + branchName
+	prTarget := refPrefix + TargetBranch
+	prSource := refPrefix + *sourceBranch
 
 	prMetadata := git.GitPullRequest{
 		ArtifactId:    &prID,
 		SourceRefName: &prSource,
 		TargetRefName: &prTarget,
-		Title:         &input.PullRequest.Title,
+		Title:         &az.PullRequest.Title,
 	}
 
 	// if auto complete is on, set the pr auto completion
-	if input.PullRequest.AutoComplete {
-		identityClient, err := identity.NewClient(ctx, connection)
+	if az.PullRequest.AutoComplete {
+		identityClient, err2 := identity.NewClient(ctx, connection)
 
-		if err != nil {
-			return nil, errors.Wrap(err, "AzureDevOps error")
+		if err2 != nil {
+			return nil, errors.Wrap(err2, "AzureDevOps error")
 		}
 
-		self, err := identityClient.GetSelf(ctx, identity.GetSelfArgs{})
+		self, err2 := identityClient.GetSelf(ctx, identity.GetSelfArgs{})
 
-		if err != nil {
+		if err2 != nil {
 			return nil, errors.Wrap(err, "AzureDevOps error")
 		}
 
@@ -92,9 +106,28 @@ func AzDevOpsCreatePullRequest(input *domain.AzureDevOpsInput, branchName string
 		}
 	}
 
-	return gitClient.CreatePullRequest(ctx, git.CreatePullRequestArgs{
+	azPr, err := gitClient.CreatePullRequest(ctx, git.CreatePullRequestArgs{
 		GitPullRequestToCreate: &prMetadata,
-		RepositoryId:           &input.Common.RepositoryName,
-		Project:                &input.ProjectName,
+		RepositoryId:           &az.Common.RepositoryName,
+		Project:                &az.ProjectName,
 	})
+
+	if err != nil {
+		return nil, errors.Wrap(err, "AzureDevOps error")
+	}
+
+	return &ProviderPullRequest{
+		PullRequestID:  strconv.Itoa(*azPr.PullRequestId),
+		PullRequestURL: *azPr.RemoteUrl,
+	}, nil
+}
+
+// GetCommonInput returns common inputs provided by the user via cli
+func (az *AzureDevOps) GetCommonInput() *domain.CommonInput {
+	return &az.Common
+}
+
+// GetPullRequestInput returns pull request inputs provided by the user via cli
+func (az *AzureDevOps) GetPullRequestInput() *domain.PullRequestInput {
+	return &az.PullRequest
 }

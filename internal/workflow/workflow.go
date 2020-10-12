@@ -1,9 +1,8 @@
-// Package workflows contains the entry point to start the fuse process for the available provider implementation
-package workflows
+// Package workflow contains the entry point to start the fuse process for the available provider implementation
+package workflow
 
 import (
 	"fuse/internal/core"
-	"fuse/internal/domain"
 	"fuse/internal/providers"
 	"os"
 
@@ -13,15 +12,15 @@ import (
 )
 
 // AzDevOpsFuse kicks off the patching workflow for azdevops
-func AzDevOpsFuse(input *domain.AzureDevOpsInput) error {
+func AzDevOpsFuse(provider providers.Provider) error {
 	log.Info().Msg("Azure DevOps workflow.")
 	branchName := "master"
 
-	if input.PullRequest.Enabled {
+	if provider.GetPullRequestInput().Enabled {
 		branchName = uuid.Must(uuid.NewRandom()).String()
 	}
 
-	gitCloneRoot, err := layoutStage(input, branchName)
+	gitCloneRoot, err := layoutStage(provider, branchName)
 
 	if err != nil {
 		return logErrAndReturn(err)
@@ -31,7 +30,7 @@ func AzDevOpsFuse(input *domain.AzureDevOpsInput) error {
 	defer os.RemoveAll(*gitCloneRoot)
 
 	// start the crawling and diffing process
-	diffsChannel, err := core.Crawl(input.Common.ContentDir, *gitCloneRoot, input.Common.Concurrency)
+	diffsChannel, err := core.Crawl(provider.GetCommonInput().ContentDir, *gitCloneRoot, provider.GetCommonInput().Concurrency)
 
 	if err != nil {
 		return logErrAndReturn(err)
@@ -54,16 +53,16 @@ func AzDevOpsFuse(input *domain.AzureDevOpsInput) error {
 		}
 
 		// create the associated pull request if fuse was configured to do so
-		if input.PullRequest.Enabled {
-			pr, err := providers.AzDevOpsCreatePullRequest(input, branchName)
+		if provider.GetPullRequestInput().Enabled {
+			pr, err := provider.CreatePullRequest(&branchName)
 
 			if err != nil {
 				return logErrAndReturn(err)
 			}
 			log.Info().
-				Uint32("total_diffs", diffs.WithDiffs).
-				Int("pullRequestId", *pr.PullRequestId).
-				Str("artifactId", *pr.ArtifactId).
+				Uint32("totalDiffs", diffs.WithDiffs).
+				Str("pullRequestID", pr.PullRequestID).
+				Str("pullRequestURL", pr.PullRequestURL).
 				Msg("Pull request created")
 		}
 
@@ -94,9 +93,9 @@ func logErrAndReturn(err error) error {
 	return err
 }
 
-func layoutStage(input *domain.AzureDevOpsInput, branchName string) (*string, error) {
+func layoutStage(provider providers.Provider, branchName string) (*string, error) {
 	defaultWorkingDir := "/tmp"
-	gitRepo, err := providers.AzDevOpsGetRepository(input)
+	gitRepo, err := provider.GetRepository()
 
 	if err != nil {
 		return nil, err
@@ -108,14 +107,14 @@ func layoutStage(input *domain.AzureDevOpsInput, branchName string) (*string, er
 		return nil, err
 	}
 
-	_, gitCloneRoot, err := providers.GitClone(*gitRepo.WebUrl, *gitRepo.Name, input.Common.Pat)
+	_, gitCloneRoot, err := providers.GitClone(gitRepo.WebURL, gitRepo.Name, provider.GetCommonInput().Pat)
 
 	if err != nil {
 		return nil, err
 	}
 
 	// Only create the branch if we're told to use a branch
-	if input.PullRequest.Enabled && branchName != "" {
+	if provider.GetPullRequestInput().Enabled && branchName != "" {
 		err = providers.CreateGitBranch(gitCloneRoot, branchName)
 
 		if err != nil {

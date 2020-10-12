@@ -7,9 +7,6 @@ fi
 
 RELEASE_VERSION=$1
 
-go build
-go test
-
 rm -rf releases/$RELEASE_VERSION
 mkdir -p releases/$RELEASE_VERSION
 

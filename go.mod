@@ -6,6 +6,7 @@ require (
 	github.com/Microsoft/azure-devops-go-api v1.0.0-b1 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-git/go-git/v5 v5.0.0 // indirect
+	github.com/google/go-github/v32 v32.1.0
 	github.com/google/uuid v1.1.1
 	github.com/microsoft/azure-devops-go-api/azuredevops v0.0.0-20200327121006-543de4815ec2
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -22,6 +23,7 @@ require (
 	github.com/spf13/viper v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 // indirect
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f // indirect
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20200513112337-417ce2331b5c // indirect
 	golang.org/x/tools v0.0.0-20200513122804-866d71a3170a // indirect
 	gopkg.in/ini.v1 v1.56.0 // indirect

@@ -19,7 +19,7 @@ var textExt = map[string]bool{
 	".yaml": true,
 }
 
-// IsTextFile checks wethere the file located at the provided path contains text.
+// IsTextFile checks if the file located at the provided path contains text.
 func IsTextFile(fp string) (bool, error) {
 	log.Debug().
 		Str("filepath", fp).

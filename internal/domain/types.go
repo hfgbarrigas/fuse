@@ -1,25 +1,17 @@
 // Package domain contains domain types
 package domain
 
-// CommonInputs are cli inputs that are common to all providers
-type CommonInputs struct {
+// CommonInput are cli inputs that are common to all providers
+type CommonInput struct {
 	RepositoryName string
 	Pat            string
 	ContentDir     string
 	Concurrency    int8
 }
 
-// PullRequestMetadata are cli inputs related to pull requests
-type PullRequestMetadata struct {
+// PullRequestInput are cli inputs related to pull requests
+type PullRequestInput struct {
 	Title        string
 	Enabled      bool
 	AutoComplete bool
-}
-
-// AzureDevOpsInput encapsulates user provided input
-type AzureDevOpsInput struct {
-	OrganizationURL string
-	ProjectName     string
-	Common          CommonInputs
-	PullRequest     PullRequestMetadata
 }

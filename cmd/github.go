@@ -11,13 +11,12 @@ import (
 )
 
 var (
-	organizationURL string
-	projectName     string
+	owner string
 )
 
-var azdevopsCmd = &cobra.Command{
-	Use:   "azdevops",
-	Short: "Fuse for Azure DevOps",
+var githubCmd = &cobra.Command{
+	Use:   "github",
+	Short: "Fuse for Github",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		ConfigLog()
 
@@ -31,7 +30,7 @@ var azdevopsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		cmd.SilenceUsage = true
 
-		input := providers.AzureDevOps{
+		input := providers.GitHub{
 			Common: domain.CommonInput{
 				RepositoryName: repoName,
 				Pat:            pat,
@@ -43,8 +42,7 @@ var azdevopsCmd = &cobra.Command{
 				AutoComplete: prAutoComplete,
 				Enabled:      prEnabled,
 			},
-			OrganizationURL: organizationURL,
-			ProjectName:     projectName,
+			Owner: owner,
 		}
 
 		return workflow.AzDevOpsFuse(&input)
@@ -52,11 +50,9 @@ var azdevopsCmd = &cobra.Command{
 }
 
 func init() {
-	azdevopsCmd.Flags().StringVarP(&organizationURL, "orgUrl", "u", "", "Azure DevOps organization url.")
-	azdevopsCmd.Flags().StringVarP(&projectName, "project", "p", "", "Azure DevOps project name.")
+	githubCmd.Flags().StringVarP(&owner, "owner", "o", "", "Github owner")
 
-	_ = azdevopsCmd.MarkFlagRequired("organizationUrl")
-	_ = azdevopsCmd.MarkFlagRequired("project")
+	_ = githubCmd.MarkFlagRequired("owner")
 
-	rootCmd.AddCommand(azdevopsCmd)
+	rootCmd.AddCommand(githubCmd)
 }

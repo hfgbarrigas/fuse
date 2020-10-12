@@ -4,18 +4,18 @@ Use fuse to patch/create local files (text based) into remote repositories hoste
 
 ## Build
 
-From the root of the project run:
+The build process depends on golangci-lint for enforce sensible standards. Thus, to build fuse you'll need it.
+Download instructions can be found (here)[https://golangci-lint.run/usage/install/#local-installation].
 
-    go build
-    go test
+Once installer, run:
+
+    make
     
-    ./fuse azdevops ...
+To release fuse run:
 
-If you make any contribution, run this before submitting your PR:
+    make <version>
 
-    golangci-lint run --fast --exclude-use-default=false
-    
-Download instructions are (here)[https://golangci-lint.run/usage/install/#local-installation].
+Binaries for linux, MacOs and Windows 64bit are generated and located at releases/<version> .
 
 ## Usage
 
@@ -23,24 +23,18 @@ Basic usage example for azure dev ops:
 
     fuse azdevops --orgUrl <organization url> --project <my-azdevops-project> --pat <personal-auth-token>  --repoName <target repo name> --contentDir <directory-with-files-to-patch>
 
-The content directory structure should be the same as the target repo, otherwise, expected patches will be interpreted as new files.
+The _<directory-with-files-to-patch>_ must be an *absolute path* and it's structure should be the same as the target repo, otherwise, expected patches will be interpreted as new files.
 
 To see all available commands and flags, run:
 
     fuse --help
     fuse azdevops --help
+    fuse github --help
     
-## Release
+## Supported providers
 
-To release fuse, at the moment just run the script located at `scripts/release.sh` with the proper version:
-
-    bash scripts/release.sh <version>
-
-At the moment, linux, MacOs and Windows 64bit binaries are generated.
+- [Azure Devops](https://dev.azure.com/)
+- [Github](https://github.com/)
 
 ## TODO's
-
-    * Improve README (include dependencies and differente usage patterns)
-    * Create a MAKEFILE
-    * Implemement tests
-    * Support more providers, github, gitlab, bitbucket ...
+    * Tests
